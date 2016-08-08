@@ -1,27 +1,31 @@
-var express=require("express")
-var app=express();
-
-app.get('/',function(request,response){
-  response.send("<h1>Hello Express</h1>");
-});
-
-app.use(express.static(__dirname + "/static"));
-app.set('views', __dirname + '/views');
-// Now lets set the view engine itself so that express knows that we are using ejs as opposed to another templating engine like jade
+// require express
+var express = require("express");
+// path module -- try to figure out where and why we use this
+var path = require("path");
+// create the express app
+var app = express();
+var bodyParser = require('body-parser');
+// use it!
+app.use(bodyParser.urlencoded({ extended: true }));
+// static content
+app.use(express.static(path.join(__dirname, "./static")));
+// setting up ejs and our views folder
+app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
-
-app.get("/users", function (request, response){
-    // hard-coded user data
-    var users_array = [
-        {name: "Priyanka", email: "priyanka3007@codingdojo.com"},
-        {name: "Dan", email: "dan@codingdojo.com"},
-        {name: "Brendan", email: "brendan@codingdojo.com"},
-        {name: "Andrew", email: "andrew@codingdojo.com"}
-    ];
-    response.render('users', {users: users_array});
+// root route to render the index.ejs view
+app.get('/', function(req, res) {
+ res.render("index");
 })
+// post route for adding a user
 
-
-app.listen(8000, function () {
-  console.log("listening on port 8000");
-})
+ app.post('/results', function (req, res){
+    //code to add user to db goes here!
+    // redirect the user back to the root route.
+    res.render('results', {user: req.body})//req.body:holds dictionary from the form & user:variable which you correspond to the information
+});
+ // This is where we would add the user to the database
+ // Then redirect to the root route
+// tell the express app to listen on port 8000
+app.listen(8000, function() {
+ console.log("listening on port 8000");
+});
